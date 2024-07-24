@@ -1,5 +1,5 @@
-//  Kosaraju’s algorithm to find strongly connected components of a directed graph
-//  Authors: Georǵi Kocharyan, Maximilian Keßler
+//  Algorithm outputting a topological order of a directed graph
+//  Authors: Georǵi Kocharyan
 
 #include <iostream>
 #include <cstdio>
@@ -21,7 +21,9 @@ int main() {
     // G.add_edge(0,3);
     // G.add_edge(3,0);
 
+    // keeps track of vertices with zero indegree, these can be put at the beginning
     std::stack<int> zero_indegree;
+
     std::vector<int> indegs = G.indegrees();
     int amount = 0;
 
@@ -33,7 +35,7 @@ int main() {
                 amount++;
             }
     }
-
+    // update indegs, zero_indegree after adding a vertex to the top. order
     while(!zero_indegree.empty()) 
     {
         int node_id = zero_indegree.top();
@@ -41,7 +43,7 @@ int main() {
         std::cout << node_id << ' ';
         for(auto i: G.adjList(node_id))
         {
-            if (indegs[i] = 1)
+            if (indegs[i] = 1) // this ensures each vertex added to stack only once
             {
                 zero_indegree.push(i);
                 amount++;
