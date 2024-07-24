@@ -12,6 +12,7 @@ struct Node {
   Node() = default;
   Node(std::list<int> neighbours);
   void add_edge(int v);
+  int outdeg() const;
 };
 
 class Digraph {
@@ -22,6 +23,8 @@ public:
   size_t num_nodes() const;
   Digraph transpose() const;
   bool isEdge(int from, int to) const;
+  int outdeg(int v) const;
+  std::vector<int> indegrees() const;
 
 private:
   std::vector<Node> nodes;
