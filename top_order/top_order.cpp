@@ -13,13 +13,8 @@ int main() {
     int size = 10;
     Digraph G(size);
     G.add_edge(3,4);
-    // G.add_edge(4,3);
-    // G.add_edge(5,6);
     G.add_edge(6,7);
     G.add_edge(7,5);
-    // G.add_edge(7,3);
-    // G.add_edge(0,3);
-    // G.add_edge(3,0);
 
     // keeps track of vertices with zero indegree, these can be put at the beginning
     std::stack<int> zero_indegree;
