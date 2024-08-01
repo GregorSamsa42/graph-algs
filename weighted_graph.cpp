@@ -19,13 +19,14 @@ int Node::deg() const
 
 WeightedGraph::WeightedGraph(size_t num_nodes) : nodes(num_nodes)
 {
-
+  edges = 0;
 }
 
 void WeightedGraph::add_edge(int from, int to, double weight)
 {
   nodes[from].add_edge(to, weight);
   nodes[to].add_edge(from, weight);
+  edges++;
 }
 
 std::list<std::pair<int, double>> WeightedGraph::adjList(int node_id) const
@@ -41,6 +42,11 @@ int WeightedGraph::deg(int node_id) const
 size_t WeightedGraph::num_nodes() const
 {
   return nodes.size();
+}
+
+int WeightedGraph::num_edges() const
+{
+  return edges;
 }
 
 std::pair<int,double> WeightedGraph::min_neighbour(int node_id) const
@@ -82,6 +88,7 @@ WeightedGraph WeightedGraph::remove_parallel() const
     for (const auto& [to, weight] : lightestEdges)
       {
         G.nodes[i].add_edge(to, weight);
+        G.edges++;
       }
   }
   return G;

@@ -20,12 +20,14 @@ public:
   void add_edge(int from, int to, double weight);
   std::list<std::pair<int, double>> adjList(int node_id) const;
   size_t num_nodes() const;
+  int num_edges() const;
   int deg(int v) const;
   std::pair<int,double> min_neighbour(int node_id) const;
   WeightedGraph remove_parallel() const;
 
 private:
   std::vector<Node> nodes;
+  int edges;
 };
 
 #endif //C___WEIGHTEDGRAPH_H
