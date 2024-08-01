@@ -6,7 +6,7 @@
 #include <vector>
 #include <stack>
 
-#include "digraph.h"
+#include "../digraph.h"
 
 // push nodes in post-order
 void dfs1(Digraph const & G, int n, std::vector<bool> & vis, std::stack<int> & node_order) {

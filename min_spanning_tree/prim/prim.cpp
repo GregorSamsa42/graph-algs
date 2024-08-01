@@ -89,6 +89,9 @@ int main() {
     G.add_edge(7,3,9);
     G.add_edge(0,3,1);
     G.add_edge(3,0,5);
+    G.add_edge(4,6,3);
+    G.add_edge(0,7,0.5);
+    G.add_edge(4,2,1);
 
     prim(G);
     
