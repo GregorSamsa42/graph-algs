@@ -2,25 +2,40 @@
 //  Authors: Georǵi Kocharyan
 
 #include <iostream>
-#include <cstdio>
 #include <vector>
 #include <list>
 #include <queue>
 #include <algorithm>
 #include <string>
+#include <memory>
 
 // Node has to store parent to make naming possible in linear time
 
 struct TreeNode {
-    std::vector<TreeNode*> children;
-    std::string name;
+    std::vector<std::unique_ptr<TreeNode>> children;
+    std::vector<int> name;
     TreeNode* parent;
     TreeNode() = default;
     TreeNode(TreeNode* node) : parent(node) {}
     void add_child()
     {
-        children.push_back(new TreeNode(this));
+        children.push_back(std::make_unique<TreeNode>(this));
     }
+    bool operator<(TreeNode const & other) const 
+    {
+        if (name.size() != other.name.size())
+        {
+            return name.size() < other.name.size() ? true : false;
+        }
+        for (size_t i = 0; i < name.size(); i++) 
+        {
+            if (name[i] != other.name[i])
+            {
+                return name[i] < other.name[i] ? true : false;
+            }
+        }
+        return false;
+    } 
 };
 
 // outputs a vector of lists of each depth of the tree
@@ -48,14 +63,14 @@ std::vector<std::list<TreeNode*>> tree_levels(TreeNode* root) {
 
         // Enqueue children with their depth
         for (const auto& child : node->children) {
-            q.push(std::make_pair(child, depth + 1));
+            q.push(std::make_pair(child.get(), depth + 1));
         }
     }
     return result;
 }
     
 bool lexicographicOrder(TreeNode* a,TreeNode* b) {
-    return (a->name)<(b->name);
+    return (*a)<(*b);
 }
 
 // to do: actually implement linear bucket sort
@@ -64,33 +79,7 @@ void bucketSort(std::list<TreeNode*>& nodes) {
     nodes.sort(lexicographicOrder);
 }
 
-int main() {
-
-    // initialise tree 1
-    TreeNode* root = new TreeNode();
-    root->add_child();
-    root->add_child();
-    root->add_child();
-    root->children[1]->add_child();
-    root->children[1]->add_child();
-    root->children[2]->add_child();
-    root->children[1]->children[1]->add_child();
-    root->children[2]->children[0]->add_child();
-    root->children[2]->children[0]->add_child();
-
-    // initialise tree 2
-    TreeNode* root2 = new TreeNode();
-    root2->add_child();
-    root2->add_child();
-    root2->add_child();
-    root2->children[0]->add_child();
-    root2->children[2]->add_child();
-    root2->children[2]->add_child();
-    root2->children[0]->children[0]->add_child();
-    root2->children[2]->children[1]->add_child();
-    root2->children[2]->children[1]->add_child();
-
-    // store all nodes by their depth
+void tree_isomorphism(TreeNode* root, TreeNode* root2) {
     std::vector<std::list<TreeNode*>> levels1 = tree_levels(root);
     std::vector<std::list<TreeNode*>> levels2 = tree_levels(root2);
 
@@ -100,40 +89,40 @@ int main() {
     if (!(height == levels2.size()-1)) 
     {
         std::cout << "Trees are not isomorphic. Their heights are different." << std::endl;
-        return 0;
+        return;
     }
 
     // the name of all leaves is 1
-    std::string s("1");
+    std::vector<int> leaf_name = {1};
 
     for (auto leaf : levels1[height])
     {
-        leaf->name = s;
+        leaf->name = leaf_name;
     }
     for (auto leaf : levels2[height])
     {
-        leaf->name = s;
+        leaf->name = leaf_name;
     }
 
     for (int i = height-1; i >= 0; i--)
     {
         int amount = levels1[i].size();
-        if (!(amount == levels2[i].size()))
+        if (amount != levels2[i].size())
         {
             std::cout << "Trees are not isomorphic, they have a different number of nodes in depth " << i << "." << std::endl;
-            return 0;
+            return;
         }
 
         // name all nodes of current height by iterating through all (sorted) children
 
         for (const auto& node : levels1[i+1])
         {
-            node->parent->name = node->parent->name + node->name;
+            node->parent->name.insert(node->parent->name.end(), node->name.begin(), node->name.end());
         }
 
         for (const auto& node : levels2[i+1])
         {
-            node->parent->name = node->parent->name + node->name;
+            node->parent->name.insert(node->parent->name.end(), node->name.begin(), node->name.end());
         }
 
         // sort nodes of current height by name
@@ -146,10 +135,10 @@ int main() {
 
         for (auto _ = amount; _--;)
         {
-            if (!(((*itr1)->name) == ((*itr2)->name)))
+            if (((*itr1)->name) != ((*itr2)->name))
             {
                 std::cout << "Trees are not isomorphic!" << std::endl;
-                return 0;
+                return;
             }
             itr1++;
             itr2++;
@@ -159,17 +148,53 @@ int main() {
         int count = 0;
         for (auto& node : levels1[i])
         {
-            node->name = std::to_string(count);
+            node->name = {count++};
             count++;
         }
         count = 0;
         for (auto& node : levels2[i])
         {
-            node->name = std::to_string(count);
-            count++;
+            node->name = {count++};
         }
     }
         
     std::cout << "Trees are isomorphic." << std::endl;
+}
+
+std::unique_ptr<TreeNode> create_tree1() {
+    auto root = std::make_unique<TreeNode>();
+    root->add_child();
+    root->add_child();
+    root->add_child();
+    root->children[1]->add_child();
+    root->children[1]->add_child();
+    root->children[2]->add_child();
+    root->children[1]->children[1]->add_child();
+    root->children[2]->children[0]->add_child();
+    root->children[2]->children[0]->add_child();
+    return root;
+}
+
+std::unique_ptr<TreeNode> create_tree2() {
+    auto root = std::make_unique<TreeNode>();
+    root->add_child();
+    root->add_child();
+    root->add_child();
+    root->children[0]->add_child();
+    root->children[2]->add_child();
+    root->children[2]->add_child();
+    root->children[0]->children[0]->add_child();
+    root->children[2]->children[1]->add_child();
+    root->children[2]->children[1]->add_child();
+    return root;
+}
+
+int main() {
+    auto root1 = create_tree1();
+    auto root2 = create_tree2();
+
+    tree_isomorphism(root1.get(), root2.get());
+
+    return 0;
     return 0;
 }

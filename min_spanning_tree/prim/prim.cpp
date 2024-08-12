@@ -2,25 +2,26 @@
 //  Authors: Georǵi Kocharyan
 
 #include <iostream>
-#include <cstdio>
 #include <vector>
-#include <list>
 #include <queue>
 #include <algorithm>
-#include <string>
 #include <functional>
+
 #include "../../weighted_graph.h"
 
+struct Vertex
+{
+  int node_id
+  double distance;
+  
+  Vertex(int node, double dist) : node_id(node), distance(dist) {}
+  // smallest weight should have highest priority
+  bool operator<(Vertex const & other) const {
+    return weight > other.weight;
+  }
+};
 
- struct key_compare
- {  
-   bool operator()(const std::pair<int, double>& l, const std::pair<int, double>& r)  
-   {  
-       return l.second > r.second;  
-   }  
- };
-
-void next_edge(WeightedGraph const & G, std::vector<std::pair<int, double>> & min_neighbours, std::priority_queue<std::pair<int, double>, std::vector<std::pair<int, double>>, key_compare> & notMST, std::vector<bool> & inMST, int & last_added, double & total_weight) {
+void next_edge(WeightedGraph const & G, std::vector<Vertex> & min_neighbours, std::priority_queue<Vertex> & notMST, std::vector<bool> & inMST, int & last_added, double & total_weight) {
     // update the priority queue
     for (const auto& j: G.adjList(last_added))
     {
@@ -28,19 +29,19 @@ void next_edge(WeightedGraph const & G, std::vector<std::pair<int, double>> & mi
         double weight = j.second;
         if (weight < min_neighbours[to].second)
         {
-            min_neighbours[to] = std::make_pair(last_added, weight);
-            notMST.push(std::make_pair(to, weight));
+            min_neighbours[to] = Vertex(last_added, weight);
+            notMST.push(Vertex(to, weight));
         }
     }
     // add the next edge
-    std::pair<int, double> node = notMST.top();
+    Vertex node = notMST.top();
     notMST.pop();
-    if (!inMST[node.first])
+    if (!inMST[node.node_id])
     {
-        std::cout << node.first << "-" << min_neighbours[node.first].first << "\t" << node.second << std::endl;
-        last_added = node.first;
-        inMST[node.first] = true;
-        total_weight = total_weight + node.second;
+        std::cout << node.node_id << "-" << min_neighbours[node.node_id].node_id << "\t" << node.distance << std::endl;
+        last_added = node.node_id;
+        inMST[node.node_id] = true;
+        total_weight = total_weight + node.distance;
     }
     
 }
@@ -52,7 +53,7 @@ void prim(WeightedGraph const & G) {
 
     // preprocessing: create a vector with the min MST neighbour of all vertices
 
-    std::vector<std::pair<int, double>> min_neighbours(H.num_nodes(), std::make_pair(0,std::numeric_limits<double>::infinity()));
+    std::vector<Vertex> min_neighbours(H.num_nodes(), std::make_pair(0,std::numeric_limits<double>::infinity()));
 
     // preprocessing: track with a vector which elements are in the MST
 
@@ -61,13 +62,14 @@ void prim(WeightedGraph const & G) {
 
     // preprocessing: create a priority queue of vertices not yet in the MST
 
-    std::priority_queue<std::pair<int, double>, std::vector<std::pair<int, double>>, key_compare> notMST;
+    std::priority_queue<Vertex> notMST;
     for (int i = 1; i < H.num_nodes(); i++)
     {
-        notMST.push(std::make_pair(i, std::numeric_limits<double>::infinity()));
+        notMST.push(Vertex(i, std::numeric_limits<double>::infinity()));
     }
     int last_added = 0;
     double total_weight = 0;
+    // add edges to tree by weight
     while (!notMST.empty()) 
     {
         next_edge(H, min_neighbours, notMST, inMST, last_added, total_weight);

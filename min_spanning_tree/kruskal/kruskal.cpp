@@ -1,29 +1,27 @@
 //  Algorithm generating a minimum spanning tree using Kruskal's algorithm
-//  Authors: Georǵi Kocharyan
+//  Authors: Georgi Kocharyan
 
 #include <iostream>
-#include <cstdio>
 #include <vector>
-#include <list>
-#include <queue>
 #include <algorithm>
-#include <string>
-#include <functional>
-#include "../../weighted_graph.h"
 #include <tuple>
 
+#include "../../weighted_graph.h"
 
- struct key_compare
- {  
-   bool operator()(const std::tuple<int, int, double>& l, const std::tuple<int, int, double>& r)  
-   {  
-       return std::get<2>(l) < std::get<2>(r);  
-   }  
- };
+struct Edge
+{
+  // todo: use type alias
+  int from;
+  int to;
+  double weight;
 
-void next_edge(WeightedGraph const & G, std::vector<std::list<int>> & elements, std::vector<int> component) {
-    
-}
+  Edge(int from_id, int to_id, double wgt) : from(from_id), to(to_id), weight(wgt) {}
+
+  bool operator<(Edge const & other) const {
+    return weight < other.weight;
+  }
+};
+
 
 void kruskal(WeightedGraph const & G) {
     // preprocessing: remove all double edges except the minimal ones
@@ -33,7 +31,7 @@ void kruskal(WeightedGraph const & G) {
 
     // preprocessing: create a vector of lists tracking the elements of the components
 
-    std::vector<std::list<int>> elements;
+    std::vector<std::vector<int>> elements;
     elements.resize(H.num_nodes());
     for (int i = 0; i < H.num_nodes(); i++)
     {
@@ -52,53 +50,47 @@ void kruskal(WeightedGraph const & G) {
     // preprocessing: create a vector containing all edges in O(m)
     // then sort them according to their weight
 
-    std::vector<std::tuple<int, int, double>> edges;
-    edges.resize(H.num_edges());
-    int count = 0;
+    std::vector<Edge> edges;
+    edges.reserve(H.num_edges());
     for (int i = 0; i < H.num_nodes(); i++)
     {
         for (const auto& j : H.adjList(i))
         {
-            edges[count] = std::make_tuple(i,j.first,j.second);
-            count++;
+            edges.emplace_back(i,j.first,j.second);
         }
     }
-    std::sort(edges.begin(), edges.end(),key_compare());
+    std::sort(edges.begin(), edges.end());
 
     for (const auto& edge : edges)
     {
         // check if edge connects two of the same component
-        if (!(component[std::get<0>(edge)]==component[std::get<1>(edge)]))
+        if (!(component[edge.from]==component[edge.to]))
         {
             // output edge
-            std::cout << std::get<0>(edge) << "-" << std::get<1>(edge) << "\t" << std::get<2>(edge) << std::endl;
-            total_weight = total_weight + std::get<2>(edge);
+            std::cout << edge.from << "-" << edge.to << "\t" << edge.weight << std::endl;
+            total_weight = total_weight + edge.weight;
             // make the components of each node the same
             // the larger component absorbs the second to guarantee O(mlogn) runtime
-            if (elements[component[std::get<0>(edge)]].size() >= elements[component[std::get<1>(edge)]].size())
+            int moved;
+            int movedto;
+            if (elements[component[edge.from]].size() >= elements[component[edge.to]].size())
             {
                 // move all elements of second component to first
-                int moved = component[std::get<1>(edge)];
-                int movedto = component[std::get<0>(edge)];
-                for (const auto& node : (elements[moved]))
-                {
-                    elements[movedto].push_back(node);
-                    component[node] = movedto;
-                }
-                elements[moved].clear();
+                moved = component[edge.to];
+                movedto = component[edge.from];
             }
             else
             {
                 // move all elements of first component to second
-                int moved = component[std::get<0>(edge)];
-                int movedto = component[std::get<1>(edge)];
-                for (const auto& node : (elements[moved]))
-                {
-                    elements[movedto].push_back(node);
-                    component[node] = movedto;
-                }
-                elements[moved].clear();
+                moved = component[edge.from];
+                movedto = component[edge.to];
             }
+            for (const auto& node : (elements[moved]))
+            {
+                elements[movedto].push_back(node);
+                component[node] = movedto;
+            }
+            elements[moved].clear();
         }
 
     }
