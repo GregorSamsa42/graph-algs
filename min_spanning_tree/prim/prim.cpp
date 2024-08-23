@@ -4,20 +4,20 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <algorithm>
+#include <limits>
 #include <functional>
 
-#include "../../weighted_graph.h"
+#include "../weighted_graph.h"
 
 struct Vertex
 {
-  int node_id
+  int node_id;
   double distance;
   
   Vertex(int node, double dist) : node_id(node), distance(dist) {}
   // smallest weight should have highest priority
   bool operator<(Vertex const & other) const {
-    return weight > other.weight;
+    return distance > other.distance;
   }
 };
 
@@ -27,7 +27,7 @@ void next_edge(WeightedGraph const & G, std::vector<Vertex> & min_neighbours, st
     {
         int to = j.first;
         double weight = j.second;
-        if (weight < min_neighbours[to].second)
+        if (weight < min_neighbours[to].distance)
         {
             min_neighbours[to] = Vertex(last_added, weight);
             notMST.push(Vertex(to, weight));
@@ -53,8 +53,10 @@ void prim(WeightedGraph const & G) {
 
     // preprocessing: create a vector with the min MST neighbour of all vertices
 
-    std::vector<Vertex> min_neighbours(H.num_nodes(), std::make_pair(0,std::numeric_limits<double>::infinity()));
-
+    std::vector<Vertex> min_neighbours;
+    for (int i = 0; i < H.num_nodes(); i++) {
+        min_neighbours.emplace_back(0,std::numeric_limits<double>::infinity());
+    }
     // preprocessing: track with a vector which elements are in the MST
 
     std::vector<bool> inMST(H.num_nodes(), false);
