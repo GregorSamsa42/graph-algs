@@ -5,6 +5,20 @@
 
 #include "../../weighted_digraph.h"
 
+WeightedDigraph guess_arborescence(WeightedDigraph G) {
+    // guess that a minimal arborescence could be one made out of the minimal edge going into each vertex
+    // by default root it at 0
+    WeightedDigraph arborescence(G.num_nodes());
+    for (int i = 1; i < G.num_nodes(); i++) {
+        arborescence.add_edge(G.min_ingoing_edge(i));
+    }
+    return arborescence;
+}
+
+void edmonds(WeightedDigraph G) {
+
+}
+
 int main() {
 
     int size = 8;
