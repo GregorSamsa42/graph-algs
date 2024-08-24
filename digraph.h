@@ -6,30 +6,40 @@
 #include <algorithm>
 
 
-struct Node {
-  std::list<int> neighbours;
+struct Node
+{
+    std::list<int> neighbours;
 
-  Node() = default;
-  Node(std::list<int> neighbours);
-  void add_edge(int v);
-  int outdeg() const;
+    Node() = default;
+
+    Node(std::list<int> neighbours);
+
+    void add_edge(int v);
+
+    int outdeg() const;
 };
 
-class Digraph {
+class Digraph
+{
 public:
-  Digraph(size_t num_nodes);
-  void add_edge(int from, int to);
-  std::list<int> adjList(int node_id) const;
-  size_t num_nodes() const;
-  Digraph transpose() const;
-  bool isEdge(int from, int to) const;
-  int outdeg(int v) const;
-  std::vector<int> indegrees() const;
+    Digraph(size_t num_nodes);
+
+    void add_edge(int from, int to);
+
+    std::list<int> adjList(int node_id) const;
+
+    size_t num_nodes() const;
+
+    Digraph transpose() const;
+
+    bool isEdge(int from, int to) const;
+
+    int outdeg(int v) const;
+
+    std::vector<int> indegrees() const;
 
 private:
-  std::vector<Node> nodes;
+    std::vector<Node> nodes;
 };
 
 #endif //C___DIGRAPH_H
-
-

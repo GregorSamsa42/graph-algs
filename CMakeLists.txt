@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD 14)
 
 include_directories(.)
 
+add_executable(kosaraju
+        digraph.cpp
+        digraph.h
+        Kosaraju/main.cpp)
+
 add_executable(edmonds
         weighted_digraph.cpp
         weighted_digraph.h
