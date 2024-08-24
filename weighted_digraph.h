@@ -38,12 +38,13 @@ struct Node
 
     void add_edge(int from, int to, double weight);
 
-    void mark();
+    void give_name(int new_name);
 
     int deg() const;
 
     int name;
-    bool marking;
+
+
 };
 
 class WeightedDigraph
@@ -73,11 +74,15 @@ public:
 
     WeightedDigraph modified_weights() const;
 
+    void name_node(int node_id, int new_name);
+
+    int node_name(int node_id);
+
 private:
-    std::vector<Node> nodes;
     int edges;
     std::vector<Edge> mins;
     bool dfs(int v, std::vector<bool> & visited, std::vector<bool> & possible, std::vector<Edge> & cycle) const;
+    std::vector<Node> nodes;
 };
 
 #endif //C___WEIGHTEDDIGRAPH_H

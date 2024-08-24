@@ -8,9 +8,11 @@ WeightedDigraph guess_arborescence(WeightedDigraph const & G)
 {
     // guess that a minimal arborescence could be one made out of the minimal edge going into each vertex
     // by default root it at 0
+    // make sure to copy over the names!
     WeightedDigraph arborescence(G.num_nodes());
     for (int i = 1; i < G.num_nodes(); i++) {
         arborescence.add_edge(G.min_ingoing_edge(i));
+        arborescence.name_node(i, G.node_name(i));
     }
     return arborescence;
 }
@@ -50,17 +52,17 @@ WeightedDigraph edmonds(WeightedDigraph const & G)
     // now recreate the actual arborescence in H.
     WeightedDigraph max_arborescence(H.num_nodes());
     for (int i = 0; i < contracted_max_arborescence.num_nodes(); i++) {
-        // note all nodes in contracted_max_arborescence have exactly one neighbour.
-        Edge edge = contracted_max_arborescence.adjList(i).front();
-        // must differentiate between going into the contracted set, going out, or not.
-        if (edge.from == contracted_max_arborescence.num_nodes() - 1) {
-            max_arborescence.add_edge(min_edge_out[edge.to]);
-        }
-        else if (edge.to == contracted_max_arborescence.num_nodes() - 1) {
-            max_arborescence.add_edge(min_edge_in[edge.from]);
-        }
-        else {
-            max_arborescence.add_edge(contracted_max_arborescence.node_name(edge.from), contracted_max_arborescence.node_name(edge.to), edge.weight);
+        for (auto const & edge : contracted_max_arborescence.adjList(i)) {
+            // must differentiate between going into the contracted set, going out, or not.
+            if (edge.from == contracted_max_arborescence.num_nodes() - 1) {
+                max_arborescence.add_edge(min_edge_out[contracted_max_arborescence.node_name(edge.to)]);
+            }
+            else if (edge.to == contracted_max_arborescence.num_nodes() - 1) {
+                max_arborescence.add_edge(min_edge_in[contracted_max_arborescence.node_name(edge.from)]);
+            }
+            else {
+                max_arborescence.add_edge(contracted_max_arborescence.node_name(edge.from), contracted_max_arborescence.node_name(edge.to), edge.weight);
+            }
         }
     }
     return max_arborescence;
@@ -88,7 +90,7 @@ int main()
     WeightedDigraph max_arborescence = edmonds(G);
     for (int i = 0; i < size; i++) {
         for (auto const & j : max_arborescence.adjList(i)) {
-            std::cout << j.from << j.to << std::endl;
+            std::cout << j.from << "-" << j.to << std::endl;
         }
     }
     return 0;

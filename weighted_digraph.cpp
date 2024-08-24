@@ -5,12 +5,10 @@
 Node::Node(std::list<Edge> neighbours_) : neighbours(std::move(neighbours_))
 {
     name = 0;
-    marking = false;
 }
 
 Node::Node(std::list<Edge> neighbours_, int name) : neighbours(std::move(neighbours_)), name(name)
 {
-    marking = false;
 }
 
 void Node::add_edge(int from, int to, double weight)
@@ -18,14 +16,14 @@ void Node::add_edge(int from, int to, double weight)
     neighbours.emplace_back(from, to, weight);
 }
 
+void Node::give_name(int new_name)
+{
+    name = new_name;
+}
+
 int Node::deg() const
 {
     return neighbours.size();
-}
-
-void Node::mark()
-{
-    marking = true;
 }
 
 WeightedDigraph::WeightedDigraph(size_t num_nodes) : nodes(num_nodes)
@@ -97,7 +95,7 @@ WeightedDigraph WeightedDigraph::contract_set(std::vector<int> const & v, std::v
     std::vector<int> mappedto(num_nodes());
     for (int i = 0; i < num_nodes(); i++) {
         if (!marking[i]) {
-            digraph.nodes[count].name = i;
+            digraph.name_node(count, i);
             mappedto[i] = count;
             count++;
         } else {
@@ -108,17 +106,18 @@ WeightedDigraph WeightedDigraph::contract_set(std::vector<int> const & v, std::v
     // now copy over all edges, treating the contracted set as a single vertex
     for (int i = 0; i < num_nodes(); i++) {
         for (auto const & j: nodes[i].neighbours) {
-            digraph.add_edge(mappedto[j.from], mappedto[j.to], j.weight);
             // ignore nodes from the contracted set to itself
-            // if (marking[j.from] && marking[j.to]) {
-            //     break;
-            // }
+            // not that aesthetically pleasing but this breaks the find_cycle method if not done
+            if (marking[j.from] && marking[j.to]) {
+                continue;
+            }
             if (marking[j.from] && min_edges_out[j.to].weight > j.weight) {
                 min_edges_out[j.to] = j;
             }
-            if (marking[j.to] && min_edges_in[j.from].weight > j.weight) {
-                min_edges_out[j.from] = j;
+            else if (marking[j.to] && min_edges_in[j.from].weight > j.weight) {
+                min_edges_in[j.from] = j;
             }
+            digraph.add_edge(mappedto[j.from], mappedto[j.to], j.weight);
         }
     }
     return digraph;
@@ -182,9 +181,20 @@ WeightedDigraph WeightedDigraph::modified_weights() const
 {
     WeightedDigraph H(num_nodes());
     for (int i = 0; i < num_nodes(); i++) {
+        H.name_node(i, node_name(i));
         for (auto const & outgoing_edge : adjList(i)) {
             H.add_edge(outgoing_edge.from, outgoing_edge.to, outgoing_edge.weight - mins[outgoing_edge.to].weight);
         }
     }
     return H;
+}
+
+void WeightedDigraph::name_node(int node_id, int new_name)
+{
+    nodes[node_id].give_name(new_name);
+}
+
+int WeightedDigraph::node_name(int node_id)
+{
+    return nodes[node_id].name;
 }
