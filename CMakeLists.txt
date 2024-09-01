@@ -10,6 +10,11 @@ add_executable(kosaraju
         digraph.h
         Kosaraju/main.cpp)
 
+add_executable(euler_cycle
+        digraph.cpp
+        digraph.h
+        euler_cycle/euler_cycle.cpp)
+
 add_executable(edmonds
         weighted_digraph.cpp
         weighted_digraph.h

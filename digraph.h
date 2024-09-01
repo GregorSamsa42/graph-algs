@@ -38,6 +38,8 @@ public:
 
     std::vector<int> indegrees() const;
 
+    int pop_edge(int v);
+
 private:
     std::vector<Node> nodes;
 };

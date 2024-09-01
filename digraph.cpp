@@ -18,24 +18,24 @@ Digraph::Digraph(size_t num_nodes) : nodes(num_nodes)
 {
 }
 
-void Digraph::add_edge(int from, int to)
+void Digraph::add_edge(const int from, const int to)
 {
     nodes[from].add_edge(to);
 }
 
-std::list<int> Digraph::adjList(int node_id) const
+std::list<int> Digraph::adjList(const int node_id) const
 {
     return (nodes[node_id]).neighbours;
 }
 
-bool Digraph::isEdge(int from, int to) const
+bool Digraph::isEdge(const int from, const int to) const
 {
     return (std::find(adjList(from).begin(), adjList(from).end(), to) != adjList(from).end());
 }
 
-int Digraph::outdeg(int node_id) const
+int Digraph::outdeg(int v) const
 {
-    return nodes[node_id].outdeg();
+    return nodes[v].outdeg();
 }
 
 std::vector<int> Digraph::indegrees() const
@@ -47,6 +47,13 @@ std::vector<int> Digraph::indegrees() const
         }
     }
     return indegs;
+}
+
+int Digraph::pop_edge(const int v)
+{
+    const int result = adjList(v).front();
+    (nodes[v].neighbours).pop_front();
+    return result;
 }
 
 size_t Digraph::num_nodes() const
