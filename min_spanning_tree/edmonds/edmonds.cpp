@@ -1,3 +1,7 @@
+// Program implementing Edmond's algorithm for finding the minimum spanning arborescence in a weighted directed graph.
+// Author: Georgi Kocharyan
+
+
 #include <iostream>
 #include <vector>
 #include <limits>
