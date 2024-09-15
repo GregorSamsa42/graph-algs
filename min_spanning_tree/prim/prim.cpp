@@ -7,14 +7,14 @@
 #include <limits>
 #include <functional>
 
-#include "../weighted_graph.h"
+#include "weighted_graph.h"
 
 struct Vertex
 {
   int node_id;
   double distance;
   
-  Vertex(int node, double dist) : node_id(node), distance(dist) {}
+  Vertex(const int node, const double dist) : node_id(node), distance(dist) {}
   // smallest weight should have highest priority
   bool operator<(Vertex const & other) const {
     return distance > other.distance;
@@ -30,11 +30,11 @@ void next_edge(WeightedGraph const & G, std::vector<Vertex> & min_neighbours, st
         if (weight < min_neighbours[to].distance)
         {
             min_neighbours[to] = Vertex(last_added, weight);
-            notMST.push(Vertex(to, weight));
+            notMST.emplace(to, weight);
         }
     }
     // add the next edge
-    Vertex node = notMST.top();
+    const Vertex node = notMST.top();
     notMST.pop();
     if (!inMST[node.node_id])
     {
@@ -49,7 +49,7 @@ void next_edge(WeightedGraph const & G, std::vector<Vertex> & min_neighbours, st
 void prim(WeightedGraph const & G) {
     // preprocessing: remove all double edges except the minimal ones
 
-    WeightedGraph H = G.remove_parallel();
+    const WeightedGraph H = G.remove_parallel();
 
     // preprocessing: create a vector with the min MST neighbour of all vertices
 
@@ -67,7 +67,7 @@ void prim(WeightedGraph const & G) {
     std::priority_queue<Vertex> notMST;
     for (int i = 1; i < H.num_nodes(); i++)
     {
-        notMST.push(Vertex(i, std::numeric_limits<double>::infinity()));
+        notMST.emplace(i, std::numeric_limits<double>::infinity());
     }
     int last_added = 0;
     double total_weight = 0;
@@ -80,8 +80,7 @@ void prim(WeightedGraph const & G) {
 }
 
 int main() {
-
-    int size = 8;
+    const int size = 8;
     WeightedGraph G(size);
     G.add_edge(3,4,2);
     G.add_edge(4,3,3);

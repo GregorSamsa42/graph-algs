@@ -7,7 +7,7 @@ Node::Node(std::list<Edge> neighbours_) : neighbours(std::move(neighbours_))
     name = 0;
 }
 
-Node::Node(std::list<Edge> neighbours_, int name) : neighbours(std::move(neighbours_)), name(name)
+Node::Node(std::list<Edge> neighbours_, const int name) : neighbours(std::move(neighbours_)), name(name)
 {
 }
 
@@ -16,7 +16,7 @@ void Node::add_edge(int from, int to, double weight)
     neighbours.emplace_back(from, to, weight);
 }
 
-void Node::give_name(int new_name)
+void Node::give_name(const int new_name)
 {
     name = new_name;
 }
@@ -26,7 +26,7 @@ int Node::deg() const
     return neighbours.size();
 }
 
-WeightedDigraph::WeightedDigraph(size_t num_nodes) : nodes(num_nodes)
+WeightedDigraph::WeightedDigraph(const size_t num_nodes) : nodes(num_nodes)
 {
     edges = 0;
     std::vector<Edge> v;
@@ -38,12 +38,12 @@ WeightedDigraph::WeightedDigraph(size_t num_nodes) : nodes(num_nodes)
 }
 
 
-void WeightedDigraph::add_edge(Edge edge)
+void WeightedDigraph::add_edge(const Edge edge)
 {
     add_edge(edge.from, edge.to, edge.weight);
 }
 
-int WeightedDigraph::node_name(int node_id) const
+int WeightedDigraph::node_name(const int node_id) const
 {
     return nodes[node_id].name;
 }
@@ -123,12 +123,12 @@ WeightedDigraph WeightedDigraph::contract_set(std::vector<int> const & v, std::v
     return digraph;
 }
 
-Edge WeightedDigraph::min_ingoing_edge(int node_id) const
+Edge WeightedDigraph::min_ingoing_edge(const int node_id) const
 {
     return mins[node_id];
 }
 
-bool WeightedDigraph::dfs(int v, std::vector<bool> &visited, std::vector<bool> &possible, std::vector<Edge> &cycle) const
+bool WeightedDigraph::dfs(const int v, std::vector<bool> &visited, std::vector<bool> &possible, std::vector<Edge> &cycle) const
 {
     visited[v] = true;
     possible[v] = true;
@@ -189,12 +189,12 @@ WeightedDigraph WeightedDigraph::modified_weights() const
     return H;
 }
 
-void WeightedDigraph::name_node(int node_id, int new_name)
+void WeightedDigraph::name_node(const int node_id, const int new_name)
 {
     nodes[node_id].give_name(new_name);
 }
 
-int WeightedDigraph::node_name(int node_id)
+int WeightedDigraph::node_name(const int node_id)
 {
     return nodes[node_id].name;
 }

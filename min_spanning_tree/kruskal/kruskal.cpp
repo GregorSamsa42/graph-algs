@@ -15,7 +15,7 @@ struct Edge
     int to;
     double weight;
 
-    Edge(int from_id, int to_id, double wgt) : from(from_id), to(to_id), weight(wgt)
+    Edge(const int from_id, const int to_id, const double wgt) : from(from_id), to(to_id), weight(wgt)
     {
     }
 
@@ -94,7 +94,7 @@ void kruskal(WeightedGraph const &G)
 
 int main()
 {
-    int size = 8;
+    constexpr int size = 8;
     WeightedGraph G(size);
     G.add_edge(3, 4, 2);
     G.add_edge(4, 3, 3);
