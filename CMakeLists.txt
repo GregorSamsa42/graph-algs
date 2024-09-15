@@ -38,3 +38,7 @@ add_executable(top_order
 add_executable(tree_isomorphism
         tree_isomorphism/tree_isomorphism.cpp)
 
+add_executable(dijsktra
+        weighted_digraph.cpp
+        weighted_digraph.h
+        shortest_paths/dijkstra.cpp)
