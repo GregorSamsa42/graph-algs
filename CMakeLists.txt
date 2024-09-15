@@ -42,3 +42,8 @@ add_executable(dijsktra
         weighted_digraph.cpp
         weighted_digraph.h
         shortest_paths/dijkstra.cpp)
+
+add_executable(dijsktra_radix
+        shortest_paths/dijkstra_radix.cpp
+        weighted_digraph_integral.cpp
+        weighted_digraph_integral.h)
