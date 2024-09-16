@@ -5,14 +5,13 @@
 #include <vector>
 #include <algorithm>
 
-
-struct Node
+struct WeightedNode
 {
     std::list<std::pair<int, double> > neighbours;
 
-    Node() = default;
+    WeightedNode() = default;
 
-    Node(std::list<std::pair<int, double> > neighbours);
+    WeightedNode(std::list<std::pair<int, double> > neighbours);
 
     void add_edge(int node_id, double weight);
 
@@ -39,7 +38,7 @@ public:
     WeightedGraph remove_parallel() const;
 
 private:
-    std::vector<Node> nodes;
+    std::vector<WeightedNode> nodes;
     int edges;
 };
 

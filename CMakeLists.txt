@@ -8,7 +8,8 @@ include_directories(.)
 add_executable(kosaraju
         digraph.cpp
         digraph.h
-        Kosaraju/main.cpp)
+        Kosaraju/kosaraju.cpp
+        Kosaraju/kosaraju.h)
 
 add_executable(euler_cycle
         digraph.cpp
@@ -57,3 +58,11 @@ add_executable(floyd_warshall
         weighted_digraph.cpp
         weighted_digraph.h
         shortest_paths/floyd_warshall.cpp)
+
+add_executable(karp
+        weighted_digraph.cpp
+        weighted_digraph.h
+        digraph.cpp
+        digraph.h
+        minimum_mean_cycle/karp.cpp
+        minimum_mean_cycle/kosaraju.cpp)

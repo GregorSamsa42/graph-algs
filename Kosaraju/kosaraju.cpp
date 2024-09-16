@@ -1,12 +1,7 @@
 //  Kosaraju’s algorithm to find strongly connected components of a directed graph
 //  Authors: Georǵi Kocharyan, Maximilian Keßler
 
-#include <iostream>
-#include <cstdio>
-#include <vector>
-#include <stack>
-
-#include "../digraph.h"
+#include "kosaraju.h"
 
 // push nodes in post-order
 void dfs1(Digraph const & G, int n, std::vector<bool> & vis, std::stack<int> & node_order) {

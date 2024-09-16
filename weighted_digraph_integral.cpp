@@ -2,26 +2,26 @@
 #include <unordered_map>
 #include <limits>
 
-Node::Node(std::list<Edge> neighbours_) : neighbours(std::move(neighbours_))
+WeightedNode::WeightedNode(std::list<Edge> neighbours_) : neighbours(std::move(neighbours_))
 {
     name = 0;
 }
 
-Node::Node(std::list<Edge> neighbours_, const int name) : neighbours(std::move(neighbours_)), name(name)
+WeightedNode::WeightedNode(std::list<Edge> neighbours_, const int name) : neighbours(std::move(neighbours_)), name(name)
 {
 }
 
-void Node::add_edge(int from, int to, int weight)
+void WeightedNode::add_edge(int from, int to, int weight)
 {
     neighbours.emplace_back(from, to, weight);
 }
 
-void Node::give_name(const int new_name)
+void WeightedNode::give_name(const int new_name)
 {
     name = new_name;
 }
 
-int Node::deg() const
+int WeightedNode::deg() const
 {
     return neighbours.size();
 }

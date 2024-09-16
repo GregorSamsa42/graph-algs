@@ -22,7 +22,7 @@ struct Node
 class Digraph
 {
 public:
-    Digraph(size_t num_nodes);
+    explicit Digraph(size_t num_nodes);
 
     void add_edge(int from, int to);
 

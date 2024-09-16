@@ -5,6 +5,9 @@
 #include <vector>
 #include <cstddef>
 
+#include "digraph.h"
+
+
 
 struct Edge
 {
@@ -26,15 +29,15 @@ struct Edge
     }
 };
 
-struct Node
+struct WeightedNode
 {
     std::list<Edge> neighbours;
 
-    Node() = default;
+    WeightedNode() = default;
 
-    Node(std::list<Edge> neighbours);
+    WeightedNode(std::list<Edge> neighbours);
 
-    Node(std::list<Edge> neighbours, int name);
+    WeightedNode(std::list<Edge> neighbours, int name);
 
     void add_edge(int from, int to, double weight);
 
@@ -78,11 +81,13 @@ public:
 
     int node_name(int node_id);
 
+    Digraph lose_weight() const;
+
 private:
     int edges;
     std::vector<Edge> mins;
     bool dfs(int v, std::vector<bool> & visited, std::vector<bool> & possible, std::vector<Edge> & cycle) const;
-    std::vector<Node> nodes;
+    std::vector<WeightedNode> nodes;
 };
 
 #endif //C___WEIGHTEDDIGRAPH_H

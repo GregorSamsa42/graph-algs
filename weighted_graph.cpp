@@ -2,16 +2,16 @@
 #include <unordered_map>
 #include <iostream>
 
-Node::Node(std::list<std::pair<int, double> > neighbours_) : neighbours(std::move(neighbours_))
+WeightedNode::WeightedNode(std::list<std::pair<int, double> > neighbours_) : neighbours(std::move(neighbours_))
 {
 }
 
-void Node::add_edge(int node_id, double weight)
+void WeightedNode::add_edge(int node_id, double weight)
 {
     neighbours.push_back(std::make_pair(node_id, weight));
 }
 
-int Node::deg() const
+int WeightedNode::deg() const
 {
     return neighbours.size();
 }
