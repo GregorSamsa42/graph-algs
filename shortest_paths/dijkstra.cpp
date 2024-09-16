@@ -1,6 +1,5 @@
-//
-// Created by gregorsamsa on 15.09.24.
-//
+// Dijkstra's algorithm to find shortest paths in a directed weighted graph with nonnegative weights.
+// Author: Georgi Kocharyan
 
 #include <iostream>
 #include <limits>

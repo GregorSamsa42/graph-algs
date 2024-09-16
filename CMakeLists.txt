@@ -47,3 +47,13 @@ add_executable(dijsktra_radix
         shortest_paths/dijkstra_radix.cpp
         weighted_digraph_integral.cpp
         weighted_digraph_integral.h)
+
+add_executable(moore_bellman_ford
+        weighted_digraph.cpp
+        weighted_digraph.h
+        shortest_paths/moore_bellman_ford.cpp)
+
+add_executable(floyd_warshall
+        weighted_digraph.cpp
+        weighted_digraph.h
+        shortest_paths/floyd_warshall.cpp)
