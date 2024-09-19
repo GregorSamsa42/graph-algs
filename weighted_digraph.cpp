@@ -1,4 +1,5 @@
 #include "weighted_digraph.h"
+#include "digraph.h"
 #include <limits>
 
 

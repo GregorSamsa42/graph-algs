@@ -14,10 +14,6 @@ struct Edge
     int from;
     int to;
     double weight;
-    //
-    // Edge(int to_id, double wgt) : to(to_id), weight(wgt)
-    // {
-    // }
 
     Edge(int from_id, int to_id, double wgt) : from(from_id), to(to_id), weight(wgt)
     {
@@ -52,6 +48,7 @@ struct WeightedNode
 
 class WeightedDigraph
 {
+    friend class Network;
 public:
     explicit WeightedDigraph(size_t num_nodes);
 

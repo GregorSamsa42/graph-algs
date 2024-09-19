@@ -66,6 +66,11 @@ add_executable(karp
         digraph.h
         minimum_mean_cycle/karp.cpp
         minimum_mean_cycle/kosaraju.cpp)
+
 add_executable(ford_fulkerson max_flows/ford_fulkerson.cpp
         network.h
-        network.cpp)
+        network.cpp
+        weighted_digraph.cpp
+        weighted_digraph.h
+        digraph.h
+        digraph.cpp)
