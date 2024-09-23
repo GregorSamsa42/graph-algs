@@ -8,7 +8,7 @@
 
 #include "../digraph.h"
 
-void top_order(Digraph G)
+void top_order(const Digraph & G)
 {
     // keeps track of vertices with zero indegree, these can be put at the beginning
     std::stack<int> zero_indegree;
@@ -24,11 +24,11 @@ void top_order(Digraph G)
     }
     // update indegs, zero_indegree after adding a vertex to the top. order
     while (!zero_indegree.empty()) {
-        int node_id = zero_indegree.top();
+        const int node_id = zero_indegree.top();
         zero_indegree.pop();
         std::cout << node_id << ' ';
         for (auto i: G.adjList(node_id)) {
-            if (indegs[i] = 1) // this ensures each vertex added to stack only once
+            if (indegs[i] == 1) // this ensures each vertex added to stack only once
             {
                 zero_indegree.push(i);
                 amount++;
@@ -43,7 +43,7 @@ void top_order(Digraph G)
 
 int main()
 {
-    int size = 10;
+    constexpr int size = 10;
     Digraph G(size);
     G.add_edge(3, 4);
     G.add_edge(6, 7);

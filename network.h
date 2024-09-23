@@ -34,8 +34,10 @@ class Network : public WeightedDigraph
     int source;
     int sink;
     Network(int source, int sink, int num_nodes);
-    std::list<NetworkEdge> adjList(int node_id) const;
+    std::list<NetworkEdge>& adjList(int node_id);
+
     void unmark();
+
     void add_edge(int from, int to, double weight);
 private:
     std::vector<NetworkWeightedNode> nodes;

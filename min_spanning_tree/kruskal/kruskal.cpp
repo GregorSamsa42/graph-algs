@@ -30,7 +30,7 @@ void kruskal(WeightedGraph const &G)
 {
     // preprocessing: remove all double edges except the minimal ones
 
-    WeightedGraph H = G.remove_parallel();
+    const WeightedGraph H = G.remove_parallel();
     double total_weight = 0;
 
     // preprocessing: create a vector of lists tracking the elements of the components
@@ -63,7 +63,7 @@ void kruskal(WeightedGraph const &G)
 
     for (const auto &edge: edges) {
         // check if edge connects two of the same component
-        if (!(component[edge.from] == component[edge.to])) {
+        if (component[edge.from] != component[edge.to]) {
             // output edge
             std::cout << edge.from << "-" << edge.to << "\t" << edge.weight << std::endl;
             total_weight = total_weight + edge.weight;

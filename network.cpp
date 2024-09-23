@@ -14,8 +14,9 @@ Network::Network(int source, int sink, int num_nodes) : WeightedDigraph(num_node
     mins = v;
 }
 
-std::list<NetworkEdge> Network::adjList(int node_id) const
+std::list<NetworkEdge>& Network::adjList(const int node_id)
 {
+    // returning as reference allows to make changes to edges from outside
     return (nodes[node_id]).neighbours;
 }
 

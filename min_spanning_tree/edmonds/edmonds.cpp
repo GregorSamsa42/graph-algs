@@ -34,10 +34,10 @@ std::vector<int> edges_to_nodes(std::vector<Edge> const & edges)
 WeightedDigraph edmonds(WeightedDigraph const & G)
 {
     // H is the weighted digraph where we have subtracted off the weight of the lowest weight incoming edge from all edges incoming into a vertex
-    WeightedDigraph H = G.modified_weights();
+    const WeightedDigraph H = G.modified_weights();
     // make a guess for the minimal arborescence and check if it works
     WeightedDigraph guess = guess_arborescence(H);
-    std::vector<Edge> cycle = guess.find_cycle();
+    const std::vector<Edge> cycle = guess.find_cycle();
     if (cycle.empty()) {
         return guess;
     }
@@ -74,7 +74,7 @@ WeightedDigraph edmonds(WeightedDigraph const & G)
 
 int main()
 {
-    int size = 8;
+    constexpr int size = 8;
     WeightedDigraph G(size);
     G.add_edge(3, 4, 2);
     G.add_edge(4, 3, 3);
@@ -91,7 +91,7 @@ int main()
     G.add_edge(0, 7, 0.5);
     G.add_edge(4, 2, 1);
 
-    WeightedDigraph max_arborescence = edmonds(G);
+    const WeightedDigraph max_arborescence = edmonds(G);
     for (int i = 0; i < size; i++) {
         for (auto const & j : max_arborescence.adjList(i)) {
             std::cout << j.from << "-" << j.to << std::endl;

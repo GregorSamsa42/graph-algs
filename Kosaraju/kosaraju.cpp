@@ -12,7 +12,7 @@ void dfs1(Digraph const & G, int n, std::vector<bool> & vis, std::stack<int> & n
 
     vis[n] = true;
 
-    for(auto i: G.adjList(n))
+    for(const auto i: G.adjList(n))
     {
         dfs1(G, i, vis, node_order);
     }
@@ -60,7 +60,7 @@ int kosaraju(Digraph const & G) {
 }
 
 int main() {
-    int size = 10;
+    constexpr int size = 10;
     Digraph G(size);
     G.add_edge(3,4);
     G.add_edge(4,3);
@@ -71,7 +71,7 @@ int main() {
     G.add_edge(0,3);
     G.add_edge(3,0);
 
-    int components= kosaraju(G);
+    const int components = kosaraju(G);
     std::cout<< "Components: "<< components << std::endl;
 
 

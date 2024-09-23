@@ -8,7 +8,12 @@
 #include "network.h"
 #include "weighted_digraph.h"
 
-void dfs(Network const & G, const NetworkEdge & edge, const int & sink, std::vector<bool> & vis, std::vector<NetworkEdge> & path, bool & found) {
+bool rest_capacity_order(const NetworkEdge *a, const NetworkEdge *b)
+{
+    return (*a) < (*b);
+}
+
+void dfs(Network & G, const NetworkEdge & edge, const int & sink, std::vector<bool> & vis, std::vector<NetworkEdge> & path, bool & found) {
     if (vis[edge.to] || found || !edge.marking)
     {
         return;  //if node is already visited don't
@@ -38,7 +43,7 @@ double ford_fulkerson(Network & G)
             G_edges.push_back(&edge);
         }
     }
-    G_edges.sort();
+    G_edges.sort(rest_capacity_order);
     // recursively add into residual graph, and stop as soon as there is an s-t path
     std::vector<NetworkEdge> path;
     path.reserve(G.num_nodes());
@@ -48,10 +53,11 @@ double ford_fulkerson(Network & G)
     while (found_path) {
         found_path = false;
         std::vector<bool> vis(G.num_nodes(), false);
-        for (auto & edge: G_edges) {
+        for (const auto & edge: G_edges) {
             if (edge->rest_capacity() > 0) {
                 edge->mark();
                 dfs(G, fake_edge, G.sink, vis, path, found_path);
+                std::fill(vis.begin(), vis.end(), false);
                 if (found_path) {
                     // unmark all edges and continue
                     G.unmark();

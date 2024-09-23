@@ -6,7 +6,6 @@
 #include <list>
 #include <queue>
 #include <algorithm>
-#include <string>
 #include <memory>
 
 // Node has to store parent to make naming possible in linear time
@@ -19,7 +18,7 @@ struct TreeNode
 
     TreeNode() = default;
 
-    TreeNode(TreeNode *node) : parent(node)
+    explicit TreeNode(TreeNode *node) : parent(node)
     {
     }
 
@@ -50,16 +49,16 @@ std::vector<std::list<TreeNode *> > tree_levels(TreeNode *root)
 
     std::vector<std::list<TreeNode *> > result;
     std::queue<std::pair<TreeNode *, int> > q;
-    q.push(std::make_pair(root, 0));
+    q.emplace(root, 0);
 
     while (!q.empty()) {
         TreeNode *node = q.front().first;
-        int depth = q.front().second;
+        const int depth = q.front().second;
         q.pop();
 
         // If this is a new depth, add a new list to the result
         if (depth >= result.size()) {
-            result.push_back(std::list<TreeNode *>());
+            result.emplace_back();
         }
 
         // Add the current node's value to the appropriate depth list
@@ -67,13 +66,13 @@ std::vector<std::list<TreeNode *> > tree_levels(TreeNode *root)
 
         // Enqueue children with their depth
         for (const auto &child: node->children) {
-            q.push(std::make_pair(child.get(), depth + 1));
+            q.emplace(child.get(), depth + 1);
         }
     }
     return result;
 }
 
-bool lexicographicOrder(TreeNode *a, TreeNode *b)
+bool lexicographicOrder(const TreeNode *a, const TreeNode *b)
 {
     return (*a) < (*b);
 }
@@ -90,7 +89,7 @@ void tree_isomorphism(TreeNode *root, TreeNode *root2)
     std::vector<std::list<TreeNode *> > levels1 = tree_levels(root);
     std::vector<std::list<TreeNode *> > levels2 = tree_levels(root2);
 
-    int height = levels1.size() - 1;
+    const int height = levels1.size() - 1;
 
     // if heights are different trees cannot be isomorphic
     if (!(height == levels2.size() - 1)) {
@@ -99,17 +98,17 @@ void tree_isomorphism(TreeNode *root, TreeNode *root2)
     }
 
     // the name of all leaves is 1
-    std::vector<int> leaf_name = {1};
+    const std::vector<int> leaf_name = {1};
 
     for (auto leaf: levels1[height]) {
         leaf->name = leaf_name;
     }
-    for (auto leaf: levels2[height]) {
+    for (const auto leaf: levels2[height]) {
         leaf->name = leaf_name;
     }
 
     for (int i = height - 1; i >= 0; i--) {
-        int amount = levels1[i].size();
+        const int amount = levels1[i].size();
         if (amount != levels2[i].size()) {
             std::cout << "Trees are not isomorphic, they have a different number of nodes in depth " << i << "." <<
                     std::endl;
@@ -131,26 +130,26 @@ void tree_isomorphism(TreeNode *root, TreeNode *root2)
         bucketSort(levels2[i]);
 
         // check if both trees have the same names in the current level
-        std::list<TreeNode *>::iterator itr1 = levels1[i].begin();
-        std::list<TreeNode *>::iterator itr2 = levels2[i].begin();
+        auto itr1 = levels1[i].begin();
+        auto itr2 = levels2[i].begin();
 
         for (auto _ = amount; _--;) {
             if (((*itr1)->name) != ((*itr2)->name)) {
                 std::cout << "Trees are not isomorphic!" << std::endl;
                 return;
             }
-            itr1++;
-            itr2++;
+            ++itr1;
+            ++itr2;
         }
 
         // rename words according to index in sorted vector
         int count = 0;
-        for (auto &node: levels1[i]) {
+        for (const auto & node: levels1[i]) {
             node->name = {count++};
             count++;
         }
         count = 0;
-        for (auto &node: levels2[i]) {
+        for (const auto & node: levels2[i]) {
             node->name = {count++};
         }
     }
@@ -190,11 +189,10 @@ std::unique_ptr<TreeNode> create_tree2()
 
 int main()
 {
-    auto root1 = create_tree1();
-    auto root2 = create_tree2();
+    const auto root1 = create_tree1();
+    const auto root2 = create_tree2();
 
     tree_isomorphism(root1.get(), root2.get());
 
-    return 0;
     return 0;
 }
