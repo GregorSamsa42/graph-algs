@@ -1,6 +1,6 @@
-//
-// Created by gregorsamsa on 19.09.24.
-//
+// Implementation of the Ford-Fulkerson algorithm using an edge-sorting trick to keep the runtime O(n^2*m*log(W)), where
+// W is the maximum flow (or the sum of all capacities exiting the source, as an upper bound)
+// A naive implementation has runtime
 
 #include <iostream>
 #include <ostream>
