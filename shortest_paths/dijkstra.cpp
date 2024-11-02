@@ -6,8 +6,10 @@
 #include <ostream>
 #include <queue>
 
-#include "weighted_digraph.h"
+#include "digraph.h"
 
+using WeightedDigraph = Digraph<WeightedEdge<double>>;
+using Edge_w = WeightedEdge<double>;
 
 struct Vertex_with_predecessor
 {

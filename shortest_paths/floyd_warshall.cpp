@@ -7,7 +7,11 @@
 #include <limits>
 #include <ostream>
 
-#include "weighted_digraph.h"
+#include "digraph.h"
+
+using WeightedDigraph = Digraph<WeightedEdge<double>>;
+using Edge_w = WeightedEdge<double>;
+
 
 void floyd_warshall (const WeightedDigraph & G, std::vector<std::vector<double>> & min_distances)
 {

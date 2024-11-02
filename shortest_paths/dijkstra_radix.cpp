@@ -10,7 +10,11 @@
 #include <ostream>
 #include <queue>
 
-#include "weighted_digraph_integral.h"
+#include "digraph.h"
+
+using WeightedDigraphIntegral = Digraph<WeightedEdge<int>>;
+using Edge_w = WeightedEdge<int>;
+
 
 struct Vertex_with_predecessor
 {
@@ -68,7 +72,7 @@ Vertex_with_predecessor radix_pop(std::vector<std::priority_queue<Vertex_with_pr
     return Vertex_with_predecessor(0, -1, -1);
 }
 
-void radix_insert(std::vector<std::priority_queue<Vertex_with_predecessor>> & heap, std::vector<int> & boundaries, const int node_id, const int distance, const int pred_id)
+void radix_insert(std::vector<std::priority_queue<Vertex_with_predecessor>> & heap, const std::vector<int> & boundaries, const int node_id, const int distance, const int pred_id)
 {
     for (int j = 1; j <= heap.size(); j++) {
         if (distance <= boundaries[j]) {
@@ -83,7 +87,7 @@ void dijkstra_radix(const WeightedDigraphIntegral & G, std::vector<int> & min_di
     // initialise the radix heap
     min_distances[measuring_from] = 0;
     std::vector<bool> fixed(G.num_nodes(), false);
-    const int B = ceil(log(G.max) / log(2))+1;
+    const int B = ceil(log(G.get_max()) / log(2))+1;
     std::vector<std::priority_queue<Vertex_with_predecessor>> buckets(B);
     std::vector<int> boundaries(B+1);
     boundaries[0] = -1;
@@ -103,7 +107,7 @@ void dijkstra_radix(const WeightedDigraphIntegral & G, std::vector<int> & min_di
         predecessor[v.node_id] = v.predecessor_id;
         fixed[v.node_id] = true;
         // loop through all neighbours of v and add them in if their min distance hasn't been determined yet
-        for (auto edge : (G.adjList(v.node_id))) {
+        for (const auto edge : (G.adjList(v.node_id))) {
             if (!fixed[edge.to]) {
                 radix_insert(buckets, boundaries, edge.to, min_distances[v.node_id]+edge.weight, v.node_id);
             }
@@ -140,7 +144,7 @@ int main()
     // output isn't done very efficiently but in principle could be done better ( O(n^2+m) runtime applies to method dijkstra )
 
     std::cout << measuring_from << " is the root node." << std::endl;
-    std::cout << "The maximal edge weight is " << G.max << "." << std::endl;
+    std::cout << "The maximal edge weight is " << G.get_max() << "." << std::endl;
     for (int i = 0; i < G.num_nodes(); ++i) {
         if (i == measuring_from) {
             continue;

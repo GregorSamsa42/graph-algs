@@ -6,9 +6,11 @@
 #include <limits>
 #include <ostream>
 
-#include "weighted_digraph.h"
-#include "digraph.h"
-#include "Kosaraju/kosaraju.h"
+#include <digraph.h>
+#include <minimum_mean_cycle/kosaraju.h>
+
+
+using WeightedDigraph = Digraph<WeightedEdge<double>>;
 
 double karp(const WeightedDigraph & G, int starting_node)
 {

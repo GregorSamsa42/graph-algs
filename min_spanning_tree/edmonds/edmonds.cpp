@@ -6,7 +6,10 @@
 #include <vector>
 #include <limits>
 
-#include "../../weighted_digraph.h"
+#include "digraph.h"
+
+using WeightedDigraph = Digraph<WeightedEdge<double>>;
+using Edge_w = WeightedEdge<double>;
 
 WeightedDigraph guess_arborescence(WeightedDigraph const & G)
 {
@@ -21,7 +24,7 @@ WeightedDigraph guess_arborescence(WeightedDigraph const & G)
     return arborescence;
 }
 
-std::vector<int> edges_to_nodes(std::vector<Edge> const & edges)
+std::vector<int> edges_to_nodes(std::vector<Edge_w> const & edges)
 {
     // given the output of find_cycle, which is a vector of edges, we convert it to a vector of nodes to serve as input for contracting
     std::vector<int> nodes(edges.size());
@@ -37,13 +40,13 @@ WeightedDigraph edmonds(WeightedDigraph const & G)
     const WeightedDigraph H = G.modified_weights();
     // make a guess for the minimal arborescence and check if it works
     WeightedDigraph guess = guess_arborescence(H);
-    const std::vector<Edge> cycle = guess.find_cycle();
+    const std::vector<Edge_w> cycle = guess.find_cycle();
     if (cycle.empty()) {
         return guess;
     }
-    // contract the cycle
-    std::vector<Edge> min_edge_in;
-    std::vector<Edge> min_edge_out;
+    // if a cycle is found, contract the cycle
+    std::vector<Edge_w> min_edge_in;
+    std::vector<Edge_w> min_edge_out;
     min_edge_out.reserve(H.num_nodes());
     min_edge_in.reserve(H.num_nodes());
     for (int i = 0; i < H.num_nodes(); i++) {
@@ -55,6 +58,8 @@ WeightedDigraph edmonds(WeightedDigraph const & G)
     WeightedDigraph contracted_max_arborescence = edmonds(contraction);
     // now recreate the actual arborescence in H.
     WeightedDigraph max_arborescence(H.num_nodes());
+    // first add in all edges that don't belong to the contracted cycle
+    int entry_point = 0;
     for (int i = 0; i < contracted_max_arborescence.num_nodes(); i++) {
         for (auto const & edge : contracted_max_arborescence.adjList(i)) {
             // must differentiate between going into the contracted set, going out, or not.
@@ -63,11 +68,19 @@ WeightedDigraph edmonds(WeightedDigraph const & G)
             }
             else if (edge.to == contracted_max_arborescence.num_nodes() - 1) {
                 max_arborescence.add_edge(min_edge_in[contracted_max_arborescence.node_name(edge.from)]);
+                entry_point = min_edge_in[contracted_max_arborescence.node_name(edge.from)].to;
             }
             else {
                 max_arborescence.add_edge(contracted_max_arborescence.node_name(edge.from), contracted_max_arborescence.node_name(edge.to), edge.weight);
             }
         }
+    }
+    // finally add back in the contracted cycle starting from the entry point.
+    for (const auto i : cycle) {
+            if (i.to != entry_point) {
+                max_arborescence.add_edge(i);
+            }
+
     }
     return max_arborescence;
 }
@@ -90,6 +103,7 @@ int main()
     G.add_edge(4, 6, 3);
     G.add_edge(0, 7, 0.5);
     G.add_edge(4, 2, 1);
+
 
     const WeightedDigraph max_arborescence = edmonds(G);
     for (int i = 0; i < size; i++) {

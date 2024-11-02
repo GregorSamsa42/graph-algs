@@ -1,4 +1,5 @@
 //  Algorithm generating a minimum spanning tree using Prim's algorithm
+// we use a directed graph class to model an undirected graph
 //  Authors: Georǵi Kocharyan
 
 #include <iostream>
@@ -7,74 +8,95 @@
 #include <limits>
 #include <functional>
 
-#include "weighted_graph.h"
+#include "digraph.h"
 
-struct Vertex
-{
-  int node_id;
-  double distance;
-  
-  Vertex(const int node, const double dist) : node_id(node), distance(dist) {}
-  // smallest weight should have highest priority
-  bool operator<(Vertex const & other) const {
-    return distance > other.distance;
-  }
+using WeightedGraph = Digraph<WeightedEdge<double>>;
+using Edge_w = WeightedEdge<double>;
+using Node_w = Node<WeightedEdge<double>>;
+
+class isLighter {
+public:
+    bool operator() (const Edge_w e1, const Edge_w e2) const
+    {
+        return e1.weight > e2.weight;
+    }
 };
 
-void next_edge(WeightedGraph const & G, std::vector<Vertex> & min_neighbours, std::priority_queue<Vertex> & notMST, std::vector<bool> & inMST, int & last_added, double & total_weight) {
+
+void next_edge(WeightedGraph const & G, std::vector<Edge_w> & min_neighbours, std::priority_queue<Edge_w, std::vector<Edge_w>, isLighter> & notMST, std::vector<bool> & inMST, int & last_added, double & total_weight, int & current_edges) {
     // update the priority queue
-    for (const auto& j: G.adjList(last_added))
+    for (const auto& edge: G.adjList(last_added))
     {
-        int to = j.first;
-        double weight = j.second;
-        if (weight < min_neighbours[to].distance)
+    // if any of the neighbours of last_added is connected to it by a weight smaller than their current best MST connecting edge, replace their best edge.
+        if (edge.weight < min_neighbours[edge.to].weight)
         {
-            min_neighbours[to] = Vertex(last_added, weight);
-            notMST.emplace(to, weight);
+            min_neighbours[edge.to] = edge; // we do not consider the orientation of edges in min_neighbours
+            notMST.push(edge);
         }
     }
     // add the next edge
-    const Vertex node = notMST.top();
+    const Edge_w edge = notMST.top();
     notMST.pop();
-    if (!inMST[node.node_id])
+    // are guaranteed by construction that at least one of the endpoints of edge is in the MST.
+    // if both of them are, nothing happens.
+    if (!inMST[edge.to])
     {
-        std::cout << node.node_id << "-" << min_neighbours[node.node_id].node_id << "\t" << node.distance << std::endl;
-        last_added = node.node_id;
-        inMST[node.node_id] = true;
-        total_weight = total_weight + node.distance;
+        std::cout << edge.from << "-" << edge.to << "\t" << edge.weight << std::endl;
+        last_added = edge.to;
+        inMST[edge.to] = true;
+        total_weight = total_weight + edge.weight;
+        current_edges++;
+    }
+    else if (!inMST[edge.from])
+    {
+        std::cout << edge.from << "-" << edge.to << "\t" << edge.weight << std::endl;
+        last_added = edge.from;
+        inMST[edge.from] = true;
+        total_weight = total_weight + edge.weight;
+        current_edges++;
     }
     
 }
 
 void prim(WeightedGraph const & G) {
-    // preprocessing: remove all double edges except the minimal ones
+    // preprocessing: remove all double edges except the minimal ones, treat as G a undirected graph.
 
-    const WeightedGraph H = G.remove_parallel();
+    WeightedGraph H(G.num_nodes());
 
-    // preprocessing: create a vector with the min MST neighbour of all vertices
+    for (int i = 0; i < G.num_nodes(); i++) {
+        for (const auto edge: G.adjList(i)) {
+            H.add_edge(edge.to,edge.from, edge.weight);
+            H.add_edge(edge.from,edge.to, edge.weight);
+        }
+    }
 
-    std::vector<Vertex> min_neighbours;
+    H = H.remove_parallel();
+
+    // preprocessing: create a vector with the min MST connecting edge of all vertices
+
+    std::vector<Edge_w> min_neighbours;
     for (int i = 0; i < H.num_nodes(); i++) {
-        min_neighbours.emplace_back(0,std::numeric_limits<double>::infinity());
+        min_neighbours.emplace_back(i,0,std::numeric_limits<double>::infinity());
     }
     // preprocessing: track with a vector which elements are in the MST
 
     std::vector<bool> inMST(H.num_nodes(), false);
     inMST[0] = true;
 
-    // preprocessing: create a priority queue of vertices not yet in the MST
+    // preprocessing: create a priority queue of eligible edges not yet in the MST
 
-    std::priority_queue<Vertex> notMST;
-    for (int i = 1; i < H.num_nodes(); i++)
-    {
-        notMST.emplace(i, std::numeric_limits<double>::infinity());
-    }
-    int last_added = 0;
+    std::priority_queue<Edge_w, std::vector<Edge_w>, isLighter> notMST;
+    // for (int i = 1; i < H.num_nodes(); i++)
+    // {
+    //     notMST.emplace(i, std::numeric_limits<double>::infinity());
+    // }
+    int last_added = 0; // add 0
     double total_weight = 0;
     // add edges to tree by weight
-    while (!notMST.empty()) 
+    int current_edges_added = 0;
+    while (current_edges_added < H.num_nodes()-1) // a spanning tree has n-1 edges
     {
-        next_edge(H, min_neighbours, notMST, inMST, last_added, total_weight);
+        next_edge(H, min_neighbours, notMST, inMST, last_added, total_weight, current_edges_added);
     }
     std::cout << "The total weight of the MST is " << total_weight << std::endl;
 }

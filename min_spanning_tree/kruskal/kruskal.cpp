@@ -1,36 +1,39 @@
 //  Algorithm generating a minimum spanning tree using Kruskal's algorithm
+// we use a directed graph class to model an undirected graph
 //  Authors: Georgi Kocharyan
 
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <tuple>
 
-#include "../../weighted_graph.h"
+#include "digraph.h"
 
-struct Edge
+using WeightedGraph = Digraph<WeightedEdge<double>>;
+using Edge_w = WeightedEdge<double>;
+using Node_w = Node<WeightedEdge<double>>;
+
+
+bool isLighter (const Edge_w e1, const Edge_w e2)
 {
-    // todo: use type alias
-    int from;
-    int to;
-    double weight;
-
-    Edge(const int from_id, const int to_id, const double wgt) : from(from_id), to(to_id), weight(wgt)
-    {
-    }
-
-    bool operator<(Edge const &other) const
-    {
-        return weight < other.weight;
-    }
-};
+    return e1.weight < e2.weight;
+}
 
 
 void kruskal(WeightedGraph const &G)
 {
-    // preprocessing: remove all double edges except the minimal ones
+    // preprocessing: remove all double edges except the minimal ones, treat as G a undirected graph.
 
-    const WeightedGraph H = G.remove_parallel();
+    WeightedGraph H(G.num_nodes());
+
+    for (int i = 0; i < G.num_nodes(); i++) {
+        for (const auto edge: G.adjList(i)) {
+            H.add_edge(edge.to,edge.from, edge.weight);
+            H.add_edge(edge.from,edge.to, edge.weight);
+        }
+    }
+
+    H = H.remove_parallel();
+
     double total_weight = 0;
 
     // preprocessing: create a vector of lists tracking the elements of the components
@@ -52,14 +55,14 @@ void kruskal(WeightedGraph const &G)
     // preprocessing: create a vector containing all edges in O(m)
     // then sort them according to their weight
 
-    std::vector<Edge> edges;
+    std::vector<Edge_w> edges;
     edges.reserve(H.num_edges());
     for (int i = 0; i < H.num_nodes(); i++) {
         for (const auto &j: H.adjList(i)) {
-            edges.emplace_back(i, j.first, j.second);
+            edges.emplace_back(j);
         }
     }
-    std::sort(edges.begin(), edges.end());
+    std::sort(edges.begin(), edges.end(), isLighter);
 
     for (const auto &edge: edges) {
         // check if edge connects two of the same component
