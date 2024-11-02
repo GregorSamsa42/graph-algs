@@ -56,3 +56,6 @@ add_executable(ford_fulkerson max_flows/ford_fulkerson.cpp
 
 add_executable(edmonds_karp max_flows/edmonds_karp.cpp
         digraph.h)
+
+add_executable(tarjan bridge_finding/tarjan.cpp
+        digraph.h)
