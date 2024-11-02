@@ -70,7 +70,7 @@ void prim(WeightedGraph const & G) {
         }
     }
 
-    H = H.remove_parallel();
+    H = H.remove_parallel_min();
 
     // preprocessing: create a vector with the min MST connecting edge of all vertices
 

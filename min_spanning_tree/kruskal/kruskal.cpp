@@ -32,7 +32,7 @@ void kruskal(WeightedGraph const &G)
         }
     }
 
-    H = H.remove_parallel();
+    H = H.remove_parallel_min();
 
     double total_weight = 0;
 

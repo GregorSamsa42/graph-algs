@@ -162,9 +162,11 @@ public:
 
     Digraph<Edge> lose_weight() const requires IsWeighted<edge_type>;
 
-    Digraph remove_parallel() const requires IsWeighted<edge_type>;
+    Digraph remove_parallel_min() const requires IsWeighted<edge_type>;
 
-    Digraph double_edges() const;
+    Digraph<edge_type> remove_parallel() const;
+
+    void double_edges();
 
     bool isEdge(int from, int to) const;
 
@@ -465,12 +467,14 @@ Digraph<Edge> Digraph<edge_type>::lose_weight() const requires IsWeighted<edge_t
 }
 
 template<typename edge_type>
-Digraph<edge_type> Digraph<edge_type>::remove_parallel() const requires IsWeighted<edge_type>
+Digraph<edge_type> Digraph<edge_type>::remove_parallel_min() const requires IsWeighted<edge_type>
 {
     Digraph H(num_nodes());
+    std::vector<double> weights(num_nodes(), std::numeric_limits<weight_type>::max());
+    //store minimum weight pointing from i to every other node
+    // initialising first and resetting by hand guarantees O(m) runtime
     for (int i = 0; i < num_nodes(); i++) {
-        std::vector<double> weights(num_nodes(),std::numeric_limits<weight_type>::max()); //store minimum weight pointing from i to every other node
-        for (auto edge : adjList(i)) {
+        for (auto edge: adjList(i)) {
             if (weights[edge.to] > edge.weight) {
                 weights[edge.to] = edge.weight;
             }
@@ -480,15 +484,39 @@ Digraph<edge_type> Digraph<edge_type>::remove_parallel() const requires IsWeight
                 H.add_edge(i, j, weights[j]);
             }
         }
+        for (auto edge: adjList(i)) {
+            weights[edge.to] = std::numeric_limits<weight_type>::max();
+        }
     }
+
     return H;
 }
 
 template<typename edge_type>
-Digraph<edge_type> Digraph<edge_type>::double_edges() const
+Digraph<edge_type> Digraph<edge_type>::remove_parallel() const
+{
+    Digraph H(num_nodes());
+    std::vector<bool> visited(num_nodes(),false);
+    for (int i = 0; i < num_nodes(); i++) {
+        for (auto edge : adjList(i)) {
+            if (!visited[edge.to]) {
+                visited[edge.to] = true;
+                H.add_edge(edge);
+            }
+        }
+        for (auto edge : adjList(i)) {
+            visited[edge.to] = false;
+        }
+    }
+    return H;
+}
+
+
+template<typename edge_type>
+void Digraph<edge_type>::double_edges()
 {
     for (int i = 0; i < num_nodes(); i++) {
-        for (const auto edge: adjList(i)) {
+        for (auto edge: adjList(i)) {
             int x = edge.to;
             edge.to = edge.from;
             edge.from = x;
