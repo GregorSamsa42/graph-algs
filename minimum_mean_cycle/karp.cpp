@@ -35,8 +35,6 @@ double karp(const WeightedDigraph & G, int starting_node)
         }
         mins[node_id]  = *max_element(maxs.begin(), maxs.end());
     }
-    // double* ptr = &(*min_element(mins.begin(), mins.end()));
-    // todo: store predecessor and output cycle
     return *min_element(mins.begin(), mins.end());
 }
 
@@ -53,17 +51,11 @@ int main()
     int components = kosaraju(G.lose_weight());
     if (components != 1) {
         std::cout << "The given graph is not strongly connected." << std::endl;
+        return 1;
     }
-    else {
-        double min_mean_cycle = karp(G, 0);
+    double min_mean_cycle = karp(G, 0);
+    // output the distances
 
-        // output the distances
-
-        std::cout << "The minimum mean cycle has mean weight " << min_mean_cycle << "." << std::endl;
-        return 0;
-    }
-
-
-    return 1;
-
+    std::cout << "The minimum mean cycle has mean weight " << min_mean_cycle << "." << std::endl;
+    return 0;
 }

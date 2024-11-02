@@ -1,3 +1,6 @@
+// Implementation of a digraph class with support for weighted edges and for network flows
+// Author: Georgi Kocharyan
+
 #ifndef C___DIGRAPH_H
 #define C___DIGRAPH_H
 
