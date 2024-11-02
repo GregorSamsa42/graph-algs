@@ -6,9 +6,11 @@
 #include <vector>
 #include <stack>
 
-#include "../digraph.h"
+#include "digraph.h"
 
-void top_order(const Digraph & G)
+using UnweightedDigraph = Digraph<Edge>;
+
+void top_order(const UnweightedDigraph & G)
 {
     // keeps track of vertices with zero indegree, these can be put at the beginning
     std::stack<int> zero_indegree;
@@ -28,15 +30,15 @@ void top_order(const Digraph & G)
         zero_indegree.pop();
         std::cout << node_id << ' ';
         for (auto i: G.adjList(node_id)) {
-            if (indegs[i] == 1) // this ensures each vertex added to stack only once
+            if (indegs[i.to] == 1) // this ensures each vertex added to stack only once
             {
-                zero_indegree.push(i);
+                zero_indegree.push(i.to);
                 amount++;
             }
-            indegs[i]--;
+            indegs[i.to]--;
         }
     }
-    if (!(amount == G.num_nodes())) {
+    if (amount != G.num_nodes()) {
         std::cout << '\n' << "The graph contains cycles and thus has no topological order." << std::endl;
     }
 }
@@ -44,7 +46,7 @@ void top_order(const Digraph & G)
 int main()
 {
     constexpr int size = 10;
-    Digraph G(size);
+    UnweightedDigraph G(size);
     G.add_edge(3, 4);
     G.add_edge(6, 7);
     G.add_edge(7, 5);

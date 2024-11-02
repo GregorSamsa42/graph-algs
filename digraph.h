@@ -164,6 +164,8 @@ public:
 
     Digraph remove_parallel() const requires IsWeighted<edge_type>;
 
+    Digraph double_edges() const;
+
     bool isEdge(int from, int to) const;
 
     int outdeg(int node_id) const;
@@ -483,6 +485,19 @@ Digraph<edge_type> Digraph<edge_type>::remove_parallel() const requires IsWeight
 }
 
 template<typename edge_type>
+Digraph<edge_type> Digraph<edge_type>::double_edges() const
+{
+    for (int i = 0; i < num_nodes(); i++) {
+        for (const auto edge: adjList(i)) {
+            int x = edge.to;
+            edge.to = edge.from;
+            edge.from = x;
+            add_edge(edge);
+        }
+    }
+}
+
+template<typename edge_type>
 bool Digraph<edge_type>::isEdge(int from, int to) const
 {
     return (std::find(adjList(from).begin(), adjList(from).end(), to) != adjList(from).end());
@@ -507,7 +522,7 @@ std::vector<int> Digraph<edge_type>::indegrees() const
     std::vector<int> indegs(num_nodes(), 0);
     for (int i = 0; i < num_nodes(); i++) {
         for (auto const &j: ((nodes[i]).neighbours)) {
-            indegs[j]++;
+            ++indegs[j.to];
         }
     }
     return indegs;
