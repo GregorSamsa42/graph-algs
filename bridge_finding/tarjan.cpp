@@ -3,15 +3,12 @@
 
 #include <iostream>
 #include <vector>
-#include <queue>
-#include <limits>
-#include <functional>
 
 #include "digraph.h"
 
 using UndirectedGraph = Digraph<Edge>;
 
-void dfs(UndirectedGraph const & G, Edge edge, std::vector<bool> & vis, std::vector<int> & node_order, std::vector<int> & lowpoint, int & time, std::vector<Edge> & bridges) {
+void dfs(UndirectedGraph const & G, const Edge edge, std::vector<bool> & vis, std::vector<int> & node_order, std::vector<int> & lowpoint, int & time, std::vector<Edge> & bridges) {
 
     vis[edge.to] = true;
     node_order[edge.to] = time;
@@ -51,7 +48,7 @@ std::vector<Edge> tarjan(const UndirectedGraph & G)
 }
 
 int main() {
-    const int size = 8;
+    constexpr int size = 8;
     UndirectedGraph G(size);
     G.add_edge(3, 4);
     G.add_edge(2, 3);
@@ -62,9 +59,7 @@ int main() {
     G.double_edges();
     G = G.remove_parallel();
 
-    std::vector<Edge> bridges = tarjan(G);
-
-    for (const auto & edge : bridges) {
+    for (std::vector<Edge> bridges = tarjan(G); const auto & edge : bridges) {
         std::cout << edge.from << " - " << edge.to << " is a bridge.\n";
     }
 
